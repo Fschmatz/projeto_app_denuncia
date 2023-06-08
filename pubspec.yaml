@@ -2,7 +2,7 @@ name: projeto_app_denuncia
 description: A Flutter project.
 publish_to: 'none'
 
-version: 0.0.9
+version: 0.7.0
 
 environment:
   sdk: '>=2.19.6 <3.0.0'

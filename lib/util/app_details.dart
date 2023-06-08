@@ -2,14 +2,19 @@ class AppDetails {
   static String appVersion = "0.6.0";
   static String appName = "Projeto App Denúncia";
   static String repositoryLink =
-      "https://github.com/Fschmatz?tab=repositories";
+      "https://github.com/Fschmatz/projeto_app_denuncia";
 
   static String changelogCurrent = '''  
-0.6.0
-- Send to API
+0.7.0
+- Testes problema da imagem
+- Novo modelo de card na home
+- Pull down para refresh
 ''';
 
   static String changelogsOld = '''
+0.6.0
+- Send to API
+
 0.5.1
 - Get Dados API do Professor
 
