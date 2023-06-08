@@ -25,6 +25,7 @@ dependencies:
   flutter_native_image:
   location: ^4.4.0
   dynamic_value:
+  camera_camera: ^2.0.2
 
 dev_dependencies:
   flutter_test:

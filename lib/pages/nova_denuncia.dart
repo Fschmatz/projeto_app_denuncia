@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
@@ -59,7 +60,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
       File? compressedFile = await FlutterNativeImage.compressImage(foto!.path,
           quality: 50, targetWidth: 300, targetHeight: 400);
 
-      final bytes = foto!.readAsBytesSync();
+      final bytes = compressedFile.readAsBytesSync();
       base64String = base64Encode(bytes);
 
       setState(() {
@@ -117,22 +118,44 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   void removerFoto() {
     setState(() {
       foto = null;
+      base64String = "";
     });
   }
 
-  void openCamera() async {
-    final pickedImage = await imagePicker.pickImage(source: ImageSource.camera);
+  void openCamera() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => CameraCamera(
+              onFile: (file) {
+                photos.add(file);
+                Navigator.pop(context);
+                compactarSetarFoto();
+              },
+            )));
+  }
+
+
+  void compactarSetarFoto() async{
     setState(() {
-      foto = File(pickedImage!.path);
+      foto = photos[0];
+    });
+
+    File? compressedFile = await FlutterNativeImage.compressImage(foto!.path,
+        quality: 50, targetWidth: 300, targetHeight: 400);
+
+    final bytes = compressedFile.readAsBytesSync();
+    base64String = base64Encode(bytes);
+
+    setState(() {
+      base64String;
     });
   }
 
   void getLocationData() async {
     Location location = Location();
-
     bool serviceEnabled;
     PermissionStatus permissionGranted;
-    //LocationData _locationData;
 
     serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
@@ -227,20 +250,20 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                         elevation: 0,
                         child: foto == null
                             ? Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5)),
-                                width: 70,
-                                height: 105,
-                              )
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5)),
+                          width: 70,
+                          height: 105,
+                        )
                             : ClipRRect(
-                                borderRadius: BorderRadius.circular(5),
-                                child: Image.file(
-                                  foto!,
-                                  width: 70,
-                                  height: 105,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
+                          borderRadius: BorderRadius.circular(5),
+                          child: Image.file(
+                            foto!,
+                            width: 70,
+                            height: 105,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -271,36 +294,36 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                           ),
                           foto != null
                               ? const SizedBox(
-                                  height: 20,
-                                )
+                            height: 20,
+                          )
                               : const SizedBox.shrink(),
                           foto != null
                               ? SizedBox(
-                                  width: 175,
-                                  height: 40,
-                                  child: TextButton(
-                                    onPressed: removerFoto,
-                                    style: ElevatedButton.styleFrom(
-                                      elevation: 0,
-                                      primary:
-                                          Theme.of(context).cardTheme.color,
-                                      onPrimary: Theme.of(context)
-                                          .textTheme
-                                          .headline1!
-                                          .color,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                      ),
-                                    ),
-                                    child: const Text(
-                                      "Remover Capa",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ),
-                                )
+                            width: 175,
+                            height: 40,
+                            child: TextButton(
+                              onPressed: removerFoto,
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                primary:
+                                Theme.of(context).cardTheme.color,
+                                onPrimary: Theme.of(context)
+                                    .textTheme
+                                    .headline1!
+                                    .color,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(12.0),
+                                ),
+                              ),
+                              child: const Text(
+                                "Remover foto",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          )
                               : const SizedBox.shrink(),
                         ],
                       ),
@@ -313,7 +336,6 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
             child: FilledButton.tonalIcon(
                 onPressed: () {
                   if (validarTextFields()) {
-                    //_salvarFoto();
                     enviarDenuncia();
                     // widget.refreshHome();
                     // Navigator.of(context).pop();
@@ -328,12 +350,14 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                 label: Text(
                   'Salvar',
                   style:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                  TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 )),
           ),
 
           // REMOVER
           // DEBUG IMAGE
+          Divider(),
+          Divider(),
           Divider(),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
@@ -342,7 +366,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                     primary: Colors.red.shade300,
                     padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                     textStyle:
-                        TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                    TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                 onPressed: () async {
                   await Clipboard.setData(ClipboardData(text: base64String));
                 },
@@ -351,7 +375,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                 label: Text(
                   'Copiar base64String',
                   style:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                  TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 )),
           ),
           SelectableText(base64String),
