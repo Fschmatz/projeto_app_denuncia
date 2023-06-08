@@ -28,7 +28,6 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    //getAllFotos();
     getAllDenuncias();
   }
 
@@ -63,9 +62,7 @@ class _HomeState extends State<Home> {
         denunciaList.add(entity);
       }
     }
-
     //print(denunciaList);
-
     setState(() {
       loading = false;
     });

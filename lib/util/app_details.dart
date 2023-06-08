@@ -1,11 +1,11 @@
 class AppDetails {
-  static String appVersion = "0.7.1";
+  static String appVersion = "0.7.3";
   static String appName = "Projeto App Denúncia";
   static String repositoryLink =
       "https://github.com/Fschmatz/projeto_app_denuncia";
 
   static String changelogCurrent = '''  
-0.7.1
+0.7.3
 - Testes problema da camera
 - Compactar foto
 - Novo modelo de card na home

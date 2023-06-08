@@ -20,17 +20,19 @@ class AppInfo extends StatelessWidget {
         ),
         body: ListView(children: <Widget>[
           const SizedBox(height: 20),
-          CircleAvatar(
-            radius: 55,
-            backgroundColor: Colors.yellow[600],
-            child: const CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage('assets/avatar.jpg'),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 200,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.fitHeight,
+                image: AssetImage("assets/mascote2.png"),//mascote1.jpg
+              ),
             ),
           ),
           const SizedBox(height: 15),
           Center(
-            child: Text(AppDetails.appName + " " + AppDetails.appVersion,
+            child: Text("${AppDetails.appName} ${AppDetails.appVersion}",
                 style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
@@ -47,7 +49,7 @@ class AppInfo extends StatelessWidget {
           const ListTile(
             leading: Icon(Icons.info_outline),
             title: Text(
-              "Aplicativo criado utilizando o Flutter e a linguagem Dart, usado para testes e aprendizado.",
+              "Aplicativo criado utilizando o Flutter e a linguagem Dart.",
             ),
           ),
           ListTile(
@@ -59,7 +61,7 @@ class AppInfo extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
-              //_launchGithub();
+              _launchGithub();
             },
             leading: const Icon(Icons.open_in_new_outlined),
             title: const Text("Ver no Github",

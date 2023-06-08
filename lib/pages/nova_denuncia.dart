@@ -4,9 +4,7 @@ import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
-import 'package:http/http.dart' as http;
 import 'package:projeto_app_denuncia/db/denuncia_dao.dart';
 
 class NovaDenuncia extends StatefulWidget {
@@ -28,9 +26,6 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
 
   final photos = <File>[];
   File? foto;
-
-  final imagePicker = ImagePicker();
-  File? fotoTESTE;
   String base64String = "";
 
   @override
@@ -56,27 +51,15 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   void enviarDenuncia() async {
     //http://177.44.248.13:5000/alertas_insert_form?description=morreu&shortdescription=vaca
 
-    if (foto != null) {
-      File? compressedFile = await FlutterNativeImage.compressImage(foto!.path,
-          quality: 50, targetWidth: 300, targetHeight: 400);
-
-      final bytes = compressedFile.readAsBytesSync();
-      base64String = base64Encode(bytes);
-
-      setState(() {
-        base64String;
-      });
-    }
-
     String sendToApi = "http://177.44.248.13:5000/alertas_insert_form?";
-    String desc = "description=" + controllerTitulo.text;
+    String desc = "description=${controllerTitulo.text}";
     sendToApi += desc;
-    String shortDesc = "&shortdescription=" + controllerDescricao.text;
+    String shortDesc = "&shortdescription=${controllerDescricao.text}";
     sendToApi += shortDesc;
 
     String image1 = "";
-    if (foto != null) {
-      image1 = "&image1=" + base64String;
+    if (base64String.isNotEmpty) {
+      image1 = "&image1=$base64String";
     } else {
       image1 = "&image1=null";
     }
@@ -88,9 +71,9 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
     sendToApi += image3;
     String active = "&active=true";
     sendToApi += active;
-    String latitude = "&latitude=" + _locationData.latitude.toString();
+    String latitude = "&latitude=${_locationData.latitude}";
     sendToApi += latitude;
-    String longitude = "&longitude=" + _locationData.longitude.toString();
+    String longitude = "&longitude=${_locationData.longitude}";
     sendToApi += longitude;
 
     final Uri url = Uri.parse(sendToApi);
