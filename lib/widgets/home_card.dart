@@ -29,8 +29,8 @@ class _HomeCardState extends State<HomeCard> {
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child:
-                  /* widget.denuncia.image1 == null
-                        ?*/
+                   widget.denuncia.image1 == null
+                        ?
                     SizedBox(
                             height: 150,
                             width: 115,
@@ -46,7 +46,7 @@ class _HomeCardState extends State<HomeCard> {
                               ),
                             ),
                           )
-                        /*: SizedBox(
+                        : SizedBox(
                              height: 150,
                              width: 115,
                              child: Card(
@@ -65,7 +65,7 @@ class _HomeCardState extends State<HomeCard> {
                                  ),
                                ),
                              ),
-                           ),*/
+                           ),
                   ),
                 ),
                 const SizedBox(

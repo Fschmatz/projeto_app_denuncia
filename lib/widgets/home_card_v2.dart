@@ -21,34 +21,40 @@ class _HomeCardV2State extends State<HomeCardV2> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){},
+      onTap: () {},
       child: SizedBox(
         width: 800,
         height: 270,
         child: InkWell(
-          onTap: (){},
+          onTap: () {},
           child: Stack(
             children: <Widget>[
               Card(
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                elevation: 5,
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: 1500,
-                      height: 185,
-                      child: Image.asset(
-                        'assets/mexThanos.jpg',
-                        fit: BoxFit.fill,
-                      ),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  elevation: 5,
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  child: widget.denuncia.image1 == null
+                      ? SizedBox(
+                    width: 1500,
+                    height: 185,
+                    child: Image.asset(
+                      'assets/mexThanos.jpg',
+                      fit: BoxFit.fill,
                     ),
-                  ],
-                ),
-              ),
+                  ) : SizedBox(
+                    width: 1500,
+                    height: 185,
+                    child: Image.memory(
+                      base64
+                          .decode(widget.denuncia.image1),
+                      fit: BoxFit.fill,
+                      filterQuality: FilterQuality.medium,
+                      gaplessPlayback: true,
+                    ),
+                  ), ),
               Positioned(
                 bottom: 0,
                 left: 16,
@@ -64,12 +70,16 @@ class _HomeCardV2State extends State<HomeCardV2> {
                       Text(
                         widget.denuncia.latitude,
                         style: TextStyle(
-                            fontSize: 14, color: Theme.of(context).hintColor),
+                            fontSize: 14, color: Theme
+                            .of(context)
+                            .hintColor),
                       ),
                       Text(
                         widget.denuncia.longitude,
                         style: TextStyle(
-                            fontSize: 14, color: Theme.of(context).hintColor),
+                            fontSize: 14, color: Theme
+                            .of(context)
+                            .hintColor),
                       ),
                     ],
                   ),

@@ -1,18 +1,24 @@
 class AppDetails {
-  static String appVersion = "0.7.3";
+  static String appVersion = "0.8.0";
   static String appName = "Projeto App Denúncia";
   static String repositoryLink =
       "https://github.com/Fschmatz/projeto_app_denuncia";
 
   static String changelogCurrent = '''  
+0.8.0
+- Habilitada listagem da api
+- Send com o Json funcional
+- Card grande para home
+- Esconder debug da pagina de nova denuncia
+''';
+
+  static String changelogsOld = '''
 0.7.3
 - Testes problema da camera
 - Compactar foto
 - Novo modelo de card na home
 - Pull down para refresh
-''';
 
-  static String changelogsOld = '''
 0.6.0
 - Send to API
 

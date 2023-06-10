@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:location/location.dart';
+import 'package:projeto_app_denuncia/classes/denuncia.dart';
 import 'package:projeto_app_denuncia/db/denuncia_dao.dart';
+import 'package:http/http.dart' as http;
 
 class NovaDenuncia extends StatefulWidget {
   @override
@@ -19,10 +21,13 @@ class NovaDenuncia extends StatefulWidget {
 class _NovaDenunciaState extends State<NovaDenuncia> {
   final dbDenuncia = DenunciaDao.instance;
   late LocationData _locationData;
-  TextEditingController controllerTitulo = TextEditingController();
-  TextEditingController controllerDescricao = TextEditingController();
+  TextEditingController controllerShortDescription =
+      TextEditingController(); //  titulo
+  TextEditingController controllerDescription = TextEditingController();
   late FocusNode inputFieldNode;
   bool tituloValido = true;
+
+  bool viewImageDebug = false;
 
   final photos = <File>[];
   File? foto;
@@ -48,13 +53,38 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
     final id = await dbDenuncia.insert(row);
   }*/
 
-  void enviarDenuncia() async {
+  Future<http.Response> enviarDenunciaJson() async {
+    Denuncia denunciaJson = Denuncia(
+        null,
+        controllerShortDescription.text,
+        controllerDescription.text,
+        base64String,
+        "null",
+        "null",
+        false,
+        _locationData.latitude.toString(),
+        _locationData.longitude.toString());
+
+    var response = await http.post(
+      Uri.parse('http://177.44.248.13:5000/alertas_insert_json'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(denunciaJson.toJson()),
+    );
+
+    //print(denunciaJson.toJson());
+    print("Resposta: ${response.statusCode}");
+    return response;
+  }
+
+  void enviarDenunciaForm() async {
     //http://177.44.248.13:5000/alertas_insert_form?description=morreu&shortdescription=vaca
 
     String sendToApi = "http://177.44.248.13:5000/alertas_insert_form?";
-    String desc = "description=${controllerTitulo.text}";
+    String desc = "description=${controllerShortDescription.text}";
     sendToApi += desc;
-    String shortDesc = "&shortdescription=${controllerDescricao.text}";
+    String shortDesc = "&shortdescription=${controllerDescription.text}";
     sendToApi += shortDesc;
 
     String image1 = "";
@@ -91,7 +121,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   }
 
   bool validarTextFields() {
-    if (controllerTitulo.text.isEmpty) {
+    if (controllerShortDescription.text.isEmpty) {
       tituloValido = false;
       return false;
     }
@@ -110,16 +140,15 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
         context,
         MaterialPageRoute(
             builder: (_) => CameraCamera(
-              onFile: (file) {
-                photos.add(file);
-                Navigator.pop(context);
-                compactarSetarFoto();
-              },
-            )));
+                  onFile: (file) {
+                    photos.add(file);
+                    Navigator.pop(context);
+                    compactarSetarFoto();
+                  },
+                )));
   }
 
-
-  void compactarSetarFoto() async{
+  void compactarSetarFoto() async {
     setState(() {
       foto = photos[0];
     });
@@ -179,7 +208,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
               textCapitalization: TextCapitalization.sentences,
               keyboardType: TextInputType.name,
-              controller: controllerTitulo,
+              controller: controllerShortDescription,
               onEditingComplete: () => node.nextFocus(),
               decoration: InputDecoration(
                   helperText: "* Obrigatório",
@@ -196,7 +225,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
               textCapitalization: TextCapitalization.sentences,
               keyboardType: TextInputType.name,
-              controller: controllerDescricao,
+              controller: controllerDescription,
               onEditingComplete: () => node.nextFocus(),
               decoration: const InputDecoration(
                 labelText: "Descrição",
@@ -233,20 +262,20 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                         elevation: 0,
                         child: foto == null
                             ? Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5)),
-                          width: 70,
-                          height: 105,
-                        )
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5)),
+                                width: 70,
+                                height: 105,
+                              )
                             : ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: Image.file(
-                            foto!,
-                            width: 70,
-                            height: 105,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
+                                borderRadius: BorderRadius.circular(5),
+                                child: Image.file(
+                                  foto!,
+                                  width: 70,
+                                  height: 105,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -277,36 +306,36 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                           ),
                           foto != null
                               ? const SizedBox(
-                            height: 20,
-                          )
+                                  height: 20,
+                                )
                               : const SizedBox.shrink(),
                           foto != null
                               ? SizedBox(
-                            width: 175,
-                            height: 40,
-                            child: TextButton(
-                              onPressed: removerFoto,
-                              style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                primary:
-                                Theme.of(context).cardTheme.color,
-                                onPrimary: Theme.of(context)
-                                    .textTheme
-                                    .headline1!
-                                    .color,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(12.0),
-                                ),
-                              ),
-                              child: const Text(
-                                "Remover foto",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ),
-                          )
+                                  width: 175,
+                                  height: 40,
+                                  child: TextButton(
+                                    onPressed: removerFoto,
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      primary:
+                                          Theme.of(context).cardTheme.color,
+                                      onPrimary: Theme.of(context)
+                                          .textTheme
+                                          .headline1!
+                                          .color,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      "Remover foto",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ),
+                                )
                               : const SizedBox.shrink(),
                         ],
                       ),
@@ -319,9 +348,8 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
             child: FilledButton.tonalIcon(
                 onPressed: () {
                   if (validarTextFields()) {
-                    enviarDenuncia();
-                    // widget.refreshHome();
-                    // Navigator.of(context).pop();
+                    enviarDenunciaJson().then((_) =>
+                        {widget.refreshHome(), Navigator.of(context).pop()});
                   } else {
                     setState(() {
                       tituloValido;
@@ -331,37 +359,44 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                 icon: Icon(Icons.save_outlined,
                     color: Theme.of(context).colorScheme.onPrimary),
                 label: Text(
-                  'Salvar',
+                  'Enviar',
                   style:
-                  TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 )),
           ),
 
           // REMOVER
           // DEBUG IMAGE
-          Divider(),
-          Divider(),
-          Divider(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
-            child: FilledButton.tonalIcon(
-                style: ElevatedButton.styleFrom(
-                    primary: Colors.red.shade300,
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                    textStyle:
-                    TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-                onPressed: () async {
-                  await Clipboard.setData(ClipboardData(text: base64String));
-                },
-                icon: Icon(Icons.copy_all_outlined,
-                    color: Theme.of(context).colorScheme.onPrimary),
-                label: Text(
-                  'Copiar base64String',
-                  style:
-                  TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-                )),
+          Visibility(
+            visible: viewImageDebug,
+            child: Column(
+              children: [
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+                  child: FilledButton.tonalIcon(
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.red.shade300,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 20),
+                          textStyle: const TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold)),
+                      onPressed: () async {
+                        await Clipboard.setData(
+                            ClipboardData(text: base64String));
+                      },
+                      icon: Icon(Icons.copy_all_outlined,
+                          color: Theme.of(context).colorScheme.onPrimary),
+                      label: Text(
+                        'Copiar base64String',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary),
+                      )),
+                ),
+                SelectableText(base64String),
+              ],
+            ),
           ),
-          SelectableText(base64String),
         ],
       ),
     );

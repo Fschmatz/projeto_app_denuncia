@@ -40,7 +40,18 @@ class _HomeState extends State<Home> {
     });
   }*/
 
-  Future<void> getAllDenuncias() async {
+  Future<void> getAllDenuncias([bool refresh= false]) async {
+
+    if(denunciaList.isNotEmpty) {
+      denunciaList.clear();
+    }
+
+    if(refresh) {
+      setState(() {
+        loading = true;
+      });
+    }
+
     final response = await http.get(Uri.parse(urlJson));
     if (response.statusCode == 200) {
       final List<List<dynamic>> data =
@@ -88,7 +99,7 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: RefreshIndicator(
-          onRefresh: getAllDenuncias,
+          onRefresh: () => getAllDenuncias(true),
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 600),
           child: (loading)
@@ -112,11 +123,12 @@ class _HomeState extends State<Home> {
                             denunciaList[index].latitude,
                             denunciaList[index].longitude);
 
-                         return HomeCardV2(
+                         /*return HomeCardV2(
+                            key: UniqueKey(), denuncia: denunciaIndex);*/
+
+                        return HomeCard(
                             key: UniqueKey(), denuncia: denunciaIndex);
 
-                        /*return HomeCard(
-                            key: UniqueKey(), denuncia: denunciaIndex);*/
                       },
                       separatorBuilder: (context, index) => const SizedBox(
                         height: 10,

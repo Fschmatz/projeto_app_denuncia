@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:dynamic_value/dynamic_value.dart';
 
 class Denuncia {
-  int _id;
+  int? _id;
   String? _shortDescription;
   String? _description;
   String? _image1;
@@ -11,7 +11,6 @@ class Denuncia {
   bool? _active;
   String? _latitude;
   String? _longitude;
-
 
   Denuncia(
       this._id,
@@ -72,42 +71,25 @@ class Denuncia {
     _shortDescription = value;
   }
 
-  int get id => _id;
+  int get id => _id ?? 0;
 
   set id(int value) {
     _id = value;
   }
 
-/*  Denuncia(
-      {required this.id,
-      this.shortDescription,
-      this.description,
-      this.image1,
-      this.image2,
-      this.image3,
-      this.active,
-      this.latitude,
-      this.longitude});*/
-
-  /* factory Denuncia.fromJson(Map<String, dynamic> json) {
-    final value = DynamicValue(json);
-
-    return Denuncia(
-        id: value["id"].toInt!,
-        shortdescription: value["shortdescription"].toString(),
-        description: value["description"].toString(),
-        image1: value["image1"].toString(),
-        image2: value["image2"].toString(),
-        image3: value["image3"].toString(),
-        active: value["active"].toBool,
-        latitude: value["latitude"].toString(),
-        longitude: value["longitude"].toString());
-  }*/
-
+  Map<String, String> toJson() => {
+        'shortdescription': _shortDescription!,
+        'description': _description!,
+        'image1': _image1!,
+        'image2': _image2!,
+        'image3': _image3!,
+        'active': _active.toString(),
+        'latitude': _latitude!,
+        'longitude': _longitude!,
+      };
 
   @override
   String toString() {
     return 'Denuncia{_id: $_id, _shortDescription: $_shortDescription, _description: $_description, _image1: $_image1, _image2: $_image2, _image3: $_image3, _active: $_active, _latitude: $_latitude, _longitude: $_longitude}';
   }
-
 }
