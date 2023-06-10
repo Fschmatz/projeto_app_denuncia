@@ -129,6 +129,8 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   }
 
   void removerFoto() {
+    loseFocus();
+
     setState(() {
       foto = null;
       base64String = "";
@@ -136,6 +138,9 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   }
 
   void openCamera() {
+
+    loseFocus();
+
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -186,6 +191,13 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
     }
 
     _locationData = await location.getLocation();
+  }
+
+  void loseFocus() {
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
   }
 
   @override
@@ -356,7 +368,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                     });
                   }
                 },
-                icon: Icon(Icons.save_outlined,
+                icon: Icon(Icons.send_outlined,
                     color: Theme.of(context).colorScheme.onPrimary),
                 label: Text(
                   'Enviar',

@@ -5,14 +5,18 @@ class AppDetails {
       "https://github.com/Fschmatz/projeto_app_denuncia";
 
   static String changelogCurrent = '''  
+0.9.0
+- Página de detalhes da denúncia
+- Fixes
+''';
+
+  static String changelogsOld = '''
 0.8.0
 - Habilitada listagem da api
 - Send com o Json funcional
 - Card grande para home
-- Esconder debug da pagina de nova denuncia
-''';
+- Esconder debug da pagina de nova denúncia
 
-  static String changelogsOld = '''
 0.7.3
 - Testes problema da camera
 - Compactar foto

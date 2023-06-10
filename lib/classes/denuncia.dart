@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'package:dynamic_value/dynamic_value.dart';
-
 class Denuncia {
   int? _id;
   String? _shortDescription;

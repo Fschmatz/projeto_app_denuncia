@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:projeto_app_denuncia/db/denuncia_dao.dart';
 import '../classes/denuncia.dart';
 import '../util/app_details.dart';
-import '../widgets/home_card.dart';
-import '../widgets/home_card_v2.dart';
+import '../widgets/denuncia_card.dart';
+import '../widgets/denuncia_card_v2.dart';
 import 'nova_denuncia.dart';
 import 'package:http/http.dart' as http;
 
@@ -32,7 +32,7 @@ class _HomeState extends State<Home> {
   }
 
   // load do DB
- /* void getAllFotos() async {
+  /* void getAllFotos() async {
     var resp = await dbDenuncia.queryAllRows();
     listaFotos = resp;
     setState(() {
@@ -40,43 +40,50 @@ class _HomeState extends State<Home> {
     });
   }*/
 
-  Future<void> getAllDenuncias([bool refresh= false]) async {
-
-    if(denunciaList.isNotEmpty) {
+  Future<void> getAllDenuncias([bool refresh = false]) async {
+    if (denunciaList.isNotEmpty) {
       denunciaList.clear();
     }
 
-    if(refresh) {
+    if (refresh) {
       setState(() {
         loading = true;
       });
     }
 
-    final response = await http.get(Uri.parse(urlJson));
-    if (response.statusCode == 200) {
-      final List<List<dynamic>> data =
-          List<List<dynamic>>.from(json.decode(response.body));
+    try {
+      final response = await http.get(Uri.parse(urlJson));
+      if (response.statusCode == 200) {
+        final List<List<dynamic>> data =
+            List<List<dynamic>>.from(json.decode(response.body));
 
-      for (var item in data) {
-        final entity = Denuncia(
-          item[0] as int,
-          item[1] ?? "",
-          item[2] ?? "",
-          item[3] ?? "",
-          item[4] ?? "",
-          item[5] ?? "",
-          item[6] ?? false,
-          item[7] ?? "",
-          item[8] ?? "",
-        );
+        for (var item in data) {
+          final entity = Denuncia(
+            item[0] as int,
+            item[1] ?? "",
+            item[2] ?? "",
+            item[3] ?? "",
+            item[4] ?? "",
+            item[5] ?? "",
+            item[6] ?? false,
+            item[7] ?? "",
+            item[8] ?? "",
+          );
 
-        denunciaList.add(entity);
+          denunciaList.add(entity);
+        }
+      } else {
+        throw Exception("Resposta: ${response.statusCode}");
       }
+
+      //print(denunciaList);
+      setState(() {
+        loading = false;
+      });
+
+    } on Exception catch (_) {
+      rethrow;
     }
-    //print(denunciaList);
-    setState(() {
-      loading = false;
-    });
   }
 
   @override
@@ -99,7 +106,7 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: RefreshIndicator(
-          onRefresh: () => getAllDenuncias(true),
+        onRefresh: () => getAllDenuncias(true),
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 600),
           child: (loading)
@@ -123,12 +130,11 @@ class _HomeState extends State<Home> {
                             denunciaList[index].latitude,
                             denunciaList[index].longitude);
 
-                         /*return HomeCardV2(
+                        /*return HomeCardV2(
                             key: UniqueKey(), denuncia: denunciaIndex);*/
 
-                        return HomeCard(
+                        return DenunciaCard(
                             key: UniqueKey(), denuncia: denunciaIndex);
-
                       },
                       separatorBuilder: (context, index) => const SizedBox(
                         height: 10,
@@ -143,7 +149,7 @@ class _HomeState extends State<Home> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(
-          Icons.camera_alt_outlined,
+          Icons.add_a_photo_outlined,
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         onPressed: () => {

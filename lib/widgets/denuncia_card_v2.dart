@@ -3,16 +3,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../classes/denuncia.dart';
 
-class HomeCardV2 extends StatefulWidget {
+class DenunciaCardV2 extends StatefulWidget {
   Denuncia denuncia;
 
-  HomeCardV2({Key? key, required this.denuncia}) : super(key: key);
+  DenunciaCardV2({Key? key, required this.denuncia}) : super(key: key);
 
   @override
-  _HomeCardV2State createState() => _HomeCardV2State();
+  _DenunciaCardV2State createState() => _DenunciaCardV2State();
 }
 
-class _HomeCardV2State extends State<HomeCardV2> {
+class _DenunciaCardV2State extends State<DenunciaCardV2> {
   @override
   void initState() {
     super.initState();

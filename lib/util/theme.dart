@@ -22,8 +22,8 @@ ThemeData light = ThemeData(
     ),
     scaffoldBackgroundColor: const Color(0xFFFFFFFF),
     cardTheme: const CardTheme(
-      surfaceTintColor: Color(0xFFE2E4E3),
-      color: Color(0xFFE2E4E3), //0xFFFAFAFC
+      surfaceTintColor: Color(0xFFF2F6F0),
+      color: Color(0xFFF2F6F0), //0xFFFAFAFC
     ),
     dialogTheme: const DialogTheme(
       surfaceTintColor: Color(0xFFFFFFFF),
