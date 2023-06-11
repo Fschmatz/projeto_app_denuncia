@@ -10,27 +10,35 @@ class DenunciaCard extends StatefulWidget {
   _DenunciaCardState createState() => _DenunciaCardState();
 
   Denuncia denuncia;
+  Function() refreshHome;
 
-  DenunciaCard({Key? key, required this.denuncia}) : super(key: key);
+  DenunciaCard({Key? key, required this.denuncia, required this.refreshHome})
+      : super(key: key);
 }
 
 class _DenunciaCardState extends State<DenunciaCard> {
-
-
-
+  bool isBase64() {
+    try {
+      base64.decode(widget.denuncia.image1);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-      child:  InkWell(
-        borderRadius:  BorderRadius.all(Radius.circular(12)),
+      child: InkWell(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
         onTap: () {
           Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (BuildContext context) => DetalhesDenunciaPage(
                   denuncia: widget.denuncia,
+                  refreshHome: widget.refreshHome,
                 ),
               ));
         },
@@ -44,44 +52,44 @@ class _DenunciaCardState extends State<DenunciaCard> {
                     flex: 2,
                     child: Container(
                       alignment: Alignment.centerLeft,
-                      child:
-                     widget.denuncia.image1 == null
-                          ?
-                      SizedBox(
+                      child: isBase64()
+                          ? SizedBox(
                               height: 150,
                               width: 115,
                               child: Card(
                                 elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: Image.memory(
+                                    base64.decode(widget.denuncia.image1),
+                                    fit: BoxFit.fill,
+                                    filterQuality: FilterQuality.medium,
+                                    gaplessPlayback: true,
+                                    errorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace? stackTrace) {
+                                      return Icon(
+                                        Icons.image_outlined,
+                                        size: 35,
+                                        color: Theme.of(context).hintColor,
+                                      );
+                                    },
+                                  ),
                                 ),
+                              ),
+                            )
+                          : SizedBox(
+                              height: 150,
+                              width: 115,
+                              child: Card(
+                                elevation: 0,
                                 child: Icon(
                                   Icons.image_outlined,
                                   size: 35,
                                   color: Theme.of(context).hintColor,
                                 ),
                               ),
-                            )
-                          : SizedBox(
-                               height: 150,
-                               width: 115,
-                               child: Card(
-                                 elevation: 1,
-                                 shape: RoundedRectangleBorder(
-                                   borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: ClipRRect(
-                                   borderRadius: BorderRadius.circular(5),
-                                   child: Image.memory(
-                                     base64
-                                         .decode(widget.denuncia.image1),
-                                     fit: BoxFit.fill,
-                                     filterQuality: FilterQuality.medium,
-                                     gaplessPlayback: true,
-                                   ),
-                                 ),
-                               ),
-                             ),
+                            ),
                     ),
                   ),
                   const SizedBox(
@@ -104,7 +112,8 @@ class _DenunciaCardState extends State<DenunciaCard> {
                           child: Text(
                             widget.denuncia.description,
                             style: TextStyle(
-                                fontSize: 14, color: Theme.of(context).hintColor),
+                                fontSize: 14,
+                                color: Theme.of(context).hintColor),
                           ),
                         ),
                         Text(
@@ -120,11 +129,6 @@ class _DenunciaCardState extends State<DenunciaCard> {
                       ],
                     ),
                   ),
-                /*  Expanded(
-                      flex: 1,
-                      child: IconButton(
-                          onPressed: () {},// _launchBrowser
-                          icon: const Icon(Icons.open_in_browser_outlined)))*/
                 ],
               ),
             ],

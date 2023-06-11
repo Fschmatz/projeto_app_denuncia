@@ -4,7 +4,7 @@ import 'package:projeto_app_denuncia/db/denuncia_dao.dart';
 import '../classes/denuncia.dart';
 import '../util/app_details.dart';
 import '../widgets/denuncia_card.dart';
-import '../widgets/denuncia_card_v2.dart';
+import '../widgets/denuncia_card_large.dart';
 import 'nova_denuncia.dart';
 import 'package:http/http.dart' as http;
 
@@ -80,7 +80,6 @@ class _HomeState extends State<Home> {
       setState(() {
         loading = false;
       });
-
     } on Exception catch (_) {
       rethrow;
     }
@@ -134,7 +133,10 @@ class _HomeState extends State<Home> {
                             key: UniqueKey(), denuncia: denunciaIndex);*/
 
                         return DenunciaCard(
-                            key: UniqueKey(), denuncia: denunciaIndex);
+                          key: UniqueKey(),
+                          denuncia: denunciaIndex,
+                          refreshHome: getAllDenuncias,
+                        );
                       },
                       separatorBuilder: (context, index) => const SizedBox(
                         height: 10,

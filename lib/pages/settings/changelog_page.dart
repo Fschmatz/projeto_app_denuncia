@@ -15,7 +15,7 @@ class ChangelogPage extends StatelessWidget {
         ),
         body: ListView(children: <Widget>[
           ListTile(
-              title: Text("Current Version",
+              title: Text("Versão Atual",
                   style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -29,7 +29,7 @@ class ChangelogPage extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: Text("Previous Versions",
+            title: Text("Versões Anteriores",
                 style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
