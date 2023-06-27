@@ -85,6 +85,18 @@ class Denuncia {
         'longitude': _longitude!,
       };
 
+  Map<String, String> toJsonComId() => {
+    'id': id.toString(),
+    'shortdescription': _shortDescription!,
+    'description': _description!,
+    'image1': _image1!,
+    'image2': _image2!,
+    'image3': _image3!,
+    'active': _active.toString(),
+    'latitude': _latitude!,
+    'longitude': _longitude!,
+  };
+
   @override
   String toString() {
     return 'Denuncia{_id: $_id, _shortDescription: $_shortDescription, _description: $_description, _image1: $_image1, _image2: $_image2, _image3: $_image3, _active: $_active, _latitude: $_latitude, _longitude: $_longitude}';

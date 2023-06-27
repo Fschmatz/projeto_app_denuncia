@@ -1,13 +1,14 @@
 class AppDetails {
-  static String appVersion = "0.9.5";
+  static String appVersion = "0.9.6";
   static String appName = "Projeto App Denúncia";
   static String repositoryLink =
       "https://github.com/Fschmatz/projeto_app_denuncia";
 
   static String changelogCurrent = '''  
-0.9.5
+0.9.6
 - Página de detalhes da denúncia
 - Fixes
+- Update Denuncia
 - Delete
 - Abrir localização no OpenMaps
 - Validar imagem antes de exibir na widget

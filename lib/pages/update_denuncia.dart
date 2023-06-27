@@ -9,16 +9,18 @@ import 'package:projeto_app_denuncia/classes/denuncia.dart';
 import 'package:projeto_app_denuncia/db/denuncia_dao.dart';
 import 'package:http/http.dart' as http;
 
-class NovaDenuncia extends StatefulWidget {
+class UpdateDenuncia extends StatefulWidget {
   @override
-  _NovaDenunciaState createState() => _NovaDenunciaState();
+  _UpdateDenunciaState createState() => _UpdateDenunciaState();
 
+  Denuncia denuncia;
   Function() refreshHome;
 
-  NovaDenuncia({Key? key, required this.refreshHome}) : super(key: key);
+  UpdateDenuncia({Key? key, required this.refreshHome, required this.denuncia})
+      : super(key: key);
 }
 
-class _NovaDenunciaState extends State<NovaDenuncia> {
+class _UpdateDenunciaState extends State<UpdateDenuncia> {
   final dbDenuncia = DenunciaDao.instance;
   late LocationData _locationData;
   TextEditingController controllerShortDescription =
@@ -37,33 +39,52 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   void initState() {
     super.initState();
     getLocationData();
+
+    if(!isBase64()) {
+      widget.denuncia.image1 = "";
+    }
+
+    controllerDescription.text = widget.denuncia.description;
+    controllerShortDescription.text = widget.denuncia.shortDescription;
   }
 
-  Future<http.Response> enviarDenunciaJson() async {
+  bool isBase64() {
+    try {
+      base64.decode(widget.denuncia.image1);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+
+  Future<http.Response> updateDenunciaJson() async {
+
     Denuncia denunciaJson = Denuncia(
-        null,
+        widget.denuncia.id,
         controllerShortDescription.text,
         controllerDescription.text,
-        base64String,
+        base64String.isEmpty ? widget.denuncia.image1 : base64String,
         "null",
         "null",
         false,
         _locationData.latitude.toString(),
         _locationData.longitude.toString());
 
+    //alertas_update_json
+
     var response = await http.post(
-      Uri.parse('http://177.44.248.13:5000/alertas_insert_json'),
+      Uri.parse('http://177.44.248.13:5000/alertas_update_json'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(denunciaJson.toJson()),
+      body: jsonEncode(denunciaJson.toJsonComId()),
     );
 
-    //print(denunciaJson.toJson());
+    print(jsonEncode(denunciaJson.toJsonComId()));
     print("Resposta: ${response.statusCode}");
     return response;
   }
-
 
   bool validarTextFields() {
     if (controllerShortDescription.text.isEmpty) {
@@ -83,7 +104,6 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   }
 
   void openCamera() {
-
     loseFocus();
 
     Navigator.push(
@@ -151,7 +171,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nova Denúncia'),
+        title: const Text('Atualizar Denúncia'),
       ),
       body: ListView(
         children: [
@@ -218,11 +238,16 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                         ),
                         elevation: 0,
                         child: foto == null
-                            ? Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5)),
-                                width: 70,
-                                height: 105,
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: Image.memory(
+                                  base64.decode(widget.denuncia.image1),
+                                  width: 70,
+                                  height: 105,
+                                  fit: BoxFit.fill,
+                                  filterQuality: FilterQuality.medium,
+                                  gaplessPlayback: true,
+                                ),
                               )
                             : ClipRRect(
                                 borderRadius: BorderRadius.circular(5),
@@ -305,8 +330,8 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
             child: FilledButton.tonalIcon(
                 onPressed: () {
                   if (validarTextFields()) {
-                    enviarDenunciaJson().then((_) =>
-                        {widget.refreshHome(), Navigator.of(context).pop()});
+                    updateDenunciaJson().then((_) =>
+                        {widget.refreshHome(), Navigator.of(context).pop(), Navigator.of(context).pop()});
                   } else {
                     setState(() {
                       tituloValido;

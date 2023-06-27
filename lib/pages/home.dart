@@ -31,15 +31,6 @@ class _HomeState extends State<Home> {
     getAllDenuncias();
   }
 
-  // load do DB
-  /* void getAllFotos() async {
-    var resp = await dbDenuncia.queryAllRows();
-    listaFotos = resp;
-    setState(() {
-      loading = false;
-    });
-  }*/
-
   Future<void> getAllDenuncias([bool refresh = false]) async {
     if (denunciaList.isNotEmpty) {
       denunciaList.clear();
